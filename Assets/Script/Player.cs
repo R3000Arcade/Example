@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
 	public float inputVertical;
 	private BoxCollider2D boxCollider;
 	public LayerMask capaSuelo;
+	bool moverse =  true;
     void Start()
     {
          animator = GetComponent<Animator>();
@@ -21,9 +22,9 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-         inputHorizontal = Input.GetAxis("Horizontal");
+        inputHorizontal = Input.GetAxis("Horizontal");
 		inputVertical = Input.GetAxis("Vertical");
-		if(inputHorizontal > 0)
+		if(inputHorizontal > 0 && moverse)
 		{
 			animator.SetBool("Correr", true);
 			animator.SetBool("Parado", false);
@@ -38,7 +39,7 @@ public class Player : MonoBehaviour
 			animator.SetBool("Saltar",false);
 		}
 		
-		if(inputVertical >0 && EstaenelSuelo())
+		if(inputVertical >0 && EstaenelSuelo() && moverse)
 		{
 			animator.SetBool("Correr", false);
 			animator.SetBool("Parado", false);
@@ -46,7 +47,7 @@ public class Player : MonoBehaviour
 			rigidBody2D.AddForce(new Vector2(0,furzaSalto));
 			 
 		}
-		if(inputVertical >0 && inputHorizontal > 0)
+		if(inputVertical >0 && inputHorizontal > 0 && moverse)
 		{
 			transform.position = transform.position + new Vector3(3, 0, 0) * Time.deltaTime;
 		}
@@ -70,4 +71,14 @@ public class Player : MonoBehaviour
 		
 	}
 	
+	private void OnCollisionEnter2D(Collision2D collition)
+	{
+		if(collition.gameObject.tag == "Enemy")
+		{
+			Debug.Log("Pum");
+			Quaternion target = Quaternion.Euler(0, 0, -90);
+			transform.rotation =  target;
+			moverse = false;
+		}
+	}
 }
